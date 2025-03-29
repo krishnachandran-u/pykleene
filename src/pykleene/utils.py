@@ -1,13 +1,16 @@
 def getAllStrings(alphabets: list, length: int) -> list[str]:
     if length < 0:
         raise Exception(f"Inside get_all_strings: variable length cannot be negative")
-    if length == 0:
-        return [""]
-    strings = []
-    for string in getAllStrings(alphabets, length - 1):
-        for alphabet in alphabets:
-            strings.append(string + alphabet)
-    return strings
+    result = [""]  
+    all_results = [""] 
+    for current_length in range(1, length + 1):
+        new_strings = []
+        for string in result:
+            for alphabet in alphabets:
+                new_strings.append(string + alphabet)
+        result = new_strings 
+        all_results.extend(result) 
+    return all_results
 
 def _getNextLetter(char: str) -> str:
     if char == 'Z':

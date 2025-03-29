@@ -174,10 +174,10 @@ class Grammar:
 
         if not self.isRegular():
             raise ValueError("Grammar is not regular")
-        if self.isLeftLinear():
-            return leftLinearToNfa()     
         if self.isRightLinear():
             return rightLinearToNfa()
+        if self.isLeftLinear():
+            return leftLinearToNfa()     
         else:
             raise ValueError("Error in converting grammar to NFA")
 
