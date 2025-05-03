@@ -118,21 +118,44 @@ class RE:
 
             elif node.data == '*':
                 newNfa = deepcopy(leftNfa)
-                newNfa = newNfa.addTransition(list(leftNfa.startStates)[0], 'ε', list(leftNfa.finalStates)[0])
                 newNfa = newNfa.addTransition(list(leftNfa.finalStates)[0], 'ε', list(leftNfa.startStates)[0])
+                # newNfa = newNfa.addTransition(list(leftNfa.startStates)[0], 'ε', list(leftNfa.finalStates)[0])
+                newStartState = f"q{cnt}"
+                newFinalState = f"q{cnt + 1}"
+                oldStartStates = leftNfa.startStates
+                oldFinalStates = leftNfa.finalStates
+                newNfa = NFA(
+                    states=newNfa.states | {newStartState, newFinalState},
+                    alphabet=newNfa.alphabet,
+                    transitions=newNfa.transitions,
+                    startStates={newStartState},
+                    finalStates={newFinalState}
+                )
+                newNfa = newNfa.addTransition(newStartState, 'ε', list(oldStartStates)[0])
+                newNfa = newNfa.addTransition(list(oldFinalStates)[0], 'ε', newFinalState)
+                newNfa = newNfa.addTransition(newStartState, 'ε', newFinalState)
+                cnt += 2
                 return newNfa, cnt
 
             elif node.data == '+':
+                newStartState = f"q{cnt}"
+                newFinalState = f"q{cnt + 1}"
+                oldStartStatesLeftNfa = leftNfa.startStates
+                oldStartStatesRightNfa = rightNfa.startStates
+                oldFinalStatesLeftNfa = leftNfa.finalStates
+                oldFinalStatesRightNfa = rightNfa.finalStates
                 newNfa = NFA(
-                    states=leftNfa.states | rightNfa.states,
+                    states=leftNfa.states | rightNfa.states | {newStartState, newFinalState},
                     alphabet=leftNfa.alphabet | rightNfa.alphabet,
                     transitions=leftNfa.transitions | rightNfa.transitions,
-                    startStates=leftNfa.startStates, 
-                    finalStates=rightNfa.finalStates
+                    startStates={newStartState}, 
+                    finalStates={newFinalState}
                 )
-
-                newNfa = newNfa.addTransition(list(leftNfa.finalStates)[0], 'ε', list(rightNfa.finalStates)[0])
-                newNfa = newNfa.addTransition(list(leftNfa.startStates)[0], 'ε', list(rightNfa.startStates)[0])
+                newNfa = newNfa.addTransition(newStartState, 'ε', list(oldStartStatesLeftNfa)[0])
+                newNfa = newNfa.addTransition(newStartState, 'ε', list(oldStartStatesRightNfa)[0])
+                newNfa = newNfa.addTransition(list(oldFinalStatesLeftNfa)[0], 'ε', newFinalState)
+                newNfa = newNfa.addTransition(list(oldFinalStatesRightNfa)[0], 'ε', newFinalState)
+                cnt += 2
                 return newNfa, cnt
 
             elif node.data == '.':
