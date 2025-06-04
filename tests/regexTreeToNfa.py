@@ -16,6 +16,7 @@ if __name__ == '__main__':
         formattedRegex = RE.format(regex)
         print(f"Formatted regex for {regexName}: {formattedRegex}")
         postfixRegex = RE.postfix(formattedRegex)
-        nfa = RE.nfa(regex, method='regexTree')
-        nfa.image(dir=OUTPUTDIR(), save=True)
+        nfa: NFA = RE.nfa(regex, method='regexTree')
+        # nfa.image(dir=OUTPUTDIR(), save=True)
+        nfa.dfa().minimal().image(dir=OUTPUTDIR(), save=True)
         
